@@ -602,6 +602,14 @@ void StimParamDialog::loadParameters(StimParameters *parameters)
 /* Public slot that saves the values from the dialog box widgets into the parameters object, and closes the window */
 void StimParamDialog::accept()
 {
+    if (calculateActualSinglePulseDuration() > maxPulseDuration_us) {
+        QMessageBox::warning(this, tr("Single pulse duration is too long"),
+                                tr("The single pulse duration exceeds hardware limitations. "
+                                   "You must reduce the duration before you can save these settings."),
+                                QMessageBox::Ok);
+        return;
+    }
+
     //save the values of the parameters from the dialog box into the object
     parameters->stimShape = (StimParameters::StimShapeValues) stimShape->currentIndex();
     parameters->stimPolarity = (StimParameters::StimPolarityValues) stimPolarity->currentIndex();
