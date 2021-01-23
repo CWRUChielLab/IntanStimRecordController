@@ -1,5 +1,9 @@
-Intan Stimulation/Recording Controller Software - Source Code (v1.07)
----------------------------------------------------------------------
+Intan Stimulation/Recording Controller Software - Source Code (v1.07 - modified)
+--------------------------------------------------------------------------------
+
+NOTE: This software has been modified from the version provided by the
+manufacturer. See CHANGELOG.md for details. Notes for building can be found
+here: https://github.com/CWRUChielLab/IntanStimRecordController/wiki
 
 This directory contains the Intan Stimulation/Recording Controller C++/Qt source code and two supporting files:
 main.bit (the FPGA configuration file) and an operating system-specific Opal Kelly library file located
@@ -16,7 +20,7 @@ connecting the Intan Recording Controller to a computer.  (They are not included
 However, you can run the Recording Controller software in demonstration mode without installing drivers
 or plugging in an interface board.
 
-The C++ source code uses a handful of C++11 features, so g++ users may need to add -std=c++11 to their 
+The C++ source code uses a handful of C++11 features, so g++ users may need to add -std=c++11 to their
 command line or make file.
 
 This code was tested with Qt 4.8.1 and with Qt 5.7.0.
@@ -25,7 +29,7 @@ For production code, you should compile a Release build (Visual Studio) or use t
 -O3 (g++).  Otherwise, the compiled code may not be fast enough to keep up with how fast data streams
 from the USB interface board.  This will show up as the FIFO lag becoming very high for debug builds.
 
-(Thanks to Josh Siegle at MIT and Open-Ephys.org for tips on Mac and Linux compilation.) 
+(Thanks to Josh Siegle at MIT and Open-Ephys.org for tips on Mac and Linux compilation.)
 
 Other Linux tips
 ----------------
@@ -56,7 +60,7 @@ code on a Mac.  This description is based on exprience using a MacBook Pro runni
 
 -------------------------------------------------------------------------
 
-Some Windows users have reported that it is necessary to install Qt with 32-bit support for the 
+Some Windows users have reported that it is necessary to install Qt with 32-bit support for the
 okFrontPanel DLL to load properly.  But this was with an older version of the Recording Controller source
 code that didn't support 64-bit, so it may not apply any more.
 

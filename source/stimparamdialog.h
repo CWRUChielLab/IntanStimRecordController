@@ -54,6 +54,9 @@ public slots:
     void notifyFocusChanged(QWidget *lostFocus, QWidget *gainedFocus);
 
 private:
+    double calculateWaveformDuration();
+    double calculateActualSinglePulseDuration();
+
     QDialogButtonBox *buttonBox;
 
     StimFigure *stimFigure;
@@ -120,7 +123,11 @@ private:
     QLabel *postStimChargeRecovOffLabel;
     QCheckBox *enableChargeRecovery;
 
-    double timestep, currentstep;
+    double timestep, currentstep, maxPulseDuration_us;
+
+    QGroupBox *singlePulseDuration;
+    QLabel *maxSinglePulseDurationLabel;
+    QLabel *actualSinglePulseDurationLabel;
 
 private slots:
     void enableWidgets();
@@ -130,6 +137,7 @@ private slots:
     void constrainPostStimChargeRecovery();
     void constrainRefractoryPeriod();
     void constrainPulseTrainPeriod();
+    void updateActualSinglePulseDuration();
     void roundTimeInputs();
     void roundCurrentInputs();
 
