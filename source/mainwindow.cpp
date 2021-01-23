@@ -4804,6 +4804,27 @@ void MainWindow::setStimSequenceParameters(Rhs2000EvalBoard *evalBoard, double t
         eventChargeRecovOff = 0;
     }
 
+    //warn if events have exceeded the max time
+    if (eventStartStim > NEVER ||
+        eventStimPhase2 > NEVER ||
+        eventStimPhase3 > NEVER ||
+        eventEndStim > NEVER ||
+        eventRepeatStim > NEVER ||
+        eventEnd > NEVER ||
+        eventAmpSettleOn > NEVER ||
+        eventAmpSettleOff > NEVER ||
+        eventAmpSettleOnRepeat > NEVER ||
+        eventAmpSettleOffRepeat > NEVER ||
+        eventChargeRecovOn > NEVER ||
+        eventChargeRecovOff > NEVER)
+    {
+        QMessageBox::critical(this, tr("Stimulation Pulse Duration Exceeds Hardware Limitation"),
+                                    tr("WARNING: The selected stimulation parameters define a pulse that is longer "
+                                       "than what the hardware can produce. If you do not reduce the pulse duration, "
+                                       "the hardware is likely to execute the wrong stimulation protocol!"),
+                                    QMessageBox::Ok);
+    }
+
     evalBoard->programStimReg(stream, channel, Rhs2000EvalBoard::EventAmpSettleOn, eventAmpSettleOn);
     evalBoard->programStimReg(stream, channel, Rhs2000EvalBoard::EventStartStim, eventStartStim);
     evalBoard->programStimReg(stream, channel, Rhs2000EvalBoard::EventStimPhase2, eventStimPhase2);
