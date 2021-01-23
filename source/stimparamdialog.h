@@ -122,7 +122,7 @@ private:
     QLabel *postStimChargeRecovOffLabel;
     QCheckBox *enableChargeRecovery;
 
-    double timestep, currentstep;
+    double timestep, currentstep, maxPulseDuration_us;
 
 private slots:
     void enableWidgets();

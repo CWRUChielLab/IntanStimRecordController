@@ -40,6 +40,9 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
     timestep = timestep_us;
     currentstep = currentstep_uA;
 
+    //maximum duration of a single pulse is hardware limited to timestep * (2^16 - 1)
+    maxPulseDuration_us = timestep_us * 65535;
+
     //create a new StimFigure
     stimFigure = new StimFigure(parameters, this);
 
@@ -61,11 +64,11 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
 
     firstPhaseDurationLabel = new QLabel(tr("First Phase Duration (D1): "));
     firstPhaseDuration = new TimeSpinBox(timestep_us);
-    firstPhaseDuration->setRange(0, 5000);
+    firstPhaseDuration->setRange(0, maxPulseDuration_us);
 
     secondPhaseDurationLabel = new QLabel(tr("Second Phase Duration (D2): "));
     secondPhaseDuration = new TimeSpinBox(timestep_us);
-    secondPhaseDuration->setRange(0, 5000);
+    secondPhaseDuration->setRange(0, maxPulseDuration_us);
 
     interphaseDelayLabel = new QLabel(tr("Interphase Delay (DP): "));
     interphaseDelay = new TimeSpinBox(timestep_us);
