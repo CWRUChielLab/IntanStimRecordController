@@ -55,6 +55,7 @@ public slots:
 
 private:
     double calculateWaveformDuration();
+    double calculateActualSinglePulseDuration();
 
     QDialogButtonBox *buttonBox;
 
@@ -124,6 +125,10 @@ private:
 
     double timestep, currentstep, maxPulseDuration_us;
 
+    QGroupBox *singlePulseDuration;
+    QLabel *maxSinglePulseDurationLabel;
+    QLabel *actualSinglePulseDurationLabel;
+
 private slots:
     void enableWidgets();
     void calculateCharge();
@@ -132,6 +137,7 @@ private slots:
     void constrainPostStimChargeRecovery();
     void constrainRefractoryPeriod();
     void constrainPulseTrainPeriod();
+    void updateActualSinglePulseDuration();
     void roundTimeInputs();
     void roundCurrentInputs();
 

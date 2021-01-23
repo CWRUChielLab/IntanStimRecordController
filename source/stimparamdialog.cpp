@@ -154,6 +154,12 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
     refractoryPeriod = new TimeSpinBox(timestep_us);
     refractoryPeriod->setRange(0, 1000000);
 
+    //create Single Pulse Duration widgets
+    singlePulseDuration = new QGroupBox(tr("Single Pulse Duration"));
+    singlePulseDuration->setToolTip(tr("Max = 65535 * time step\nActual = delay + waveform duration + refractory period"));
+    maxSinglePulseDurationLabel = new QLabel(tr("Maximum single pulse duration: ") + QString::number(maxPulseDuration_us / 1000) + " ms");
+    actualSinglePulseDurationLabel = new QLabel(tr("Pulse Duration Placeholder"));
+
     //create Amp Settle widgets
     ampSettle = new QGroupBox(tr("Amp Settle"));
 
@@ -224,6 +230,13 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
     connect(firstPhaseAmplitude, SIGNAL(editingFinished()), this, SLOT(roundCurrentInputs()));
     connect(secondPhaseAmplitude, SIGNAL(editingFinished()), this, SLOT(roundCurrentInputs()));
     connect(enableStim, SIGNAL(toggled(bool)), stimFigure, SLOT(highlightStimTrace(bool)));
+
+    connect(stimShape, SIGNAL(currentIndexChanged(int)), this, SLOT(updateActualSinglePulseDuration()));
+    connect(firstPhaseDuration, SIGNAL(valueChanged(double)), this, SLOT(updateActualSinglePulseDuration()));
+    connect(secondPhaseDuration, SIGNAL(valueChanged(double)), this, SLOT(updateActualSinglePulseDuration()));
+    connect(interphaseDelay, SIGNAL(valueChanged(double)), this, SLOT(updateActualSinglePulseDuration()));
+    connect(postTriggerDelay, SIGNAL(valueChanged(double)), this, SLOT(updateActualSinglePulseDuration()));
+    connect(refractoryPeriod, SIGNAL(valueChanged(double)), this, SLOT(updateActualSinglePulseDuration()));
 
     //connect signals to stimFigure's non-highlight slots
     connect(stimShape, SIGNAL(currentIndexChanged(int)), stimFigure, SLOT(updateStimShape(int)));
@@ -424,6 +437,12 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
     pulseTrainLayout->addLayout(refractoryPeriodRow);
     pulseTrain->setLayout(pulseTrainLayout);
 
+    //single pulse duration widgets' layout
+    QVBoxLayout *singlePulseDurationLayout = new QVBoxLayout;
+    singlePulseDurationLayout->addWidget(maxSinglePulseDurationLabel);
+    singlePulseDurationLayout->addWidget(actualSinglePulseDurationLabel);
+    singlePulseDuration->setLayout(singlePulseDurationLayout);
+
     //amp Settle widgets' layout
     QHBoxLayout *preStimAmpSettleRow = new QHBoxLayout;
     preStimAmpSettleRow->addWidget(preStimAmpSettleLabel);
@@ -472,6 +491,7 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
     QVBoxLayout *firstColumn = new QVBoxLayout;
     firstColumn->addWidget(trigger);
     firstColumn->addWidget(pulseTrain);
+    firstColumn->addWidget(singlePulseDuration);
     firstColumn->addStretch();
 
     //second Column
@@ -573,6 +593,9 @@ void StimParamDialog::loadParameters(StimParameters *parameters)
     //calculate frequency and charge so that the first labels that are displayed correspond to the loaded parameters
     calculatePulseTrainFrequency();
     calculateCharge();
+
+    //calculate actual single pulse duration from other parameters and display the value in its label
+    updateActualSinglePulseDuration();
 
 }
 
@@ -746,6 +769,9 @@ void StimParamDialog::enableWidgets()
     postStimChargeRecovOffLabel->setEnabled(enableStim->isChecked() && enableChargeRecovery->isChecked());
     postStimChargeRecovOff->setEnabled(enableStim->isChecked() && enableChargeRecovery->isChecked());
 
+    /* Single Pulse Period */
+    singlePulseDuration->setEnabled(enableStim->isChecked());
+
     /* Reset Text for First Phase Labels */
     if (stimShape->currentIndex() == StimParameters::Biphasic || stimShape->currentIndex() == StimParameters::BiphasicWithInterphaseDelay)
     {
@@ -904,6 +930,31 @@ double StimParamDialog::calculateWaveformDuration()
 void StimParamDialog::constrainPulseTrainPeriod()
 {
     pulseTrainPeriod->setTrueMinimum(calculateWaveformDuration());
+}
+
+
+/* Private method for calculating the total duration of the single pulse */
+double StimParamDialog::calculateActualSinglePulseDuration()
+{
+    double totalPulseDuration = postTriggerDelay->getTrueValue() + calculateWaveformDuration() + refractoryPeriod->getTrueValue();
+    return totalPulseDuration;
+}
+
+
+/* Private slot that calculates the actual single pulse duration and updates its label */
+void StimParamDialog::updateActualSinglePulseDuration()
+{
+    double totalPulseDuration = calculateActualSinglePulseDuration();
+
+    if (totalPulseDuration < 999)
+        actualSinglePulseDurationLabel->setText("Actual single pulse duration: " + QString::number(totalPulseDuration, 'f', 1) + " " + QSTRING_MU_SYMBOL + "s");
+    else
+        actualSinglePulseDurationLabel->setText("Actual single pulse duration: " + QString::number(totalPulseDuration/1000, 'f', 3) + " ms");
+
+    if (totalPulseDuration <= maxPulseDuration_us)
+        actualSinglePulseDurationLabel->setStyleSheet("QLabel {}");
+    else
+        actualSinglePulseDurationLabel->setStyleSheet("QLabel {color: red}");
 }
 
 
