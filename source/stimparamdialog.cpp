@@ -867,32 +867,40 @@ void StimParamDialog::constrainRefractoryPeriod()
     refractoryPeriod->setTrueMinimum(qMax(postStimAmpSettle->getTrueValue(), postStimChargeRecovOff->getTrueValue()));
 }
 
-/* Private slot that constrains pulseTrainPeriod's lowest possible value to the sum of the durations of active phases */
-void StimParamDialog::constrainPulseTrainPeriod()
+
+/* Private method for calculating the total duration of the waveform */
+double StimParamDialog::calculateWaveformDuration()
 {
-    double minimum;
+    double waveformDuration;
     //if biphasic
     if (stimShape->currentIndex() == StimParameters::Biphasic)
     {
-        //minimum equals D1 + D2
-        minimum = firstPhaseDuration->getTrueValue() + secondPhaseDuration->getTrueValue();
+        //duration equals D1 + D2
+        waveformDuration = firstPhaseDuration->getTrueValue() + secondPhaseDuration->getTrueValue();
     }
 
     //if biphasic with interphase delay
     else if (stimShape->currentIndex() == StimParameters::BiphasicWithInterphaseDelay)
     {
-        //minimum equals D1 + D2 + D_int
-        minimum = firstPhaseDuration->getTrueValue() + secondPhaseDuration->getTrueValue() + interphaseDelay->getTrueValue();
+        //duration equals D1 + D2 + D_int
+        waveformDuration = firstPhaseDuration->getTrueValue() + secondPhaseDuration->getTrueValue() + interphaseDelay->getTrueValue();
     }
 
     //if triphasic
     else if (stimShape->currentIndex() == StimParameters::Triphasic)
     {
-        //minimum equals 2*D1 + D2
-        minimum = (2 * firstPhaseDuration->getTrueValue()) + secondPhaseDuration->getTrueValue();
+        //duration equals 2*D1 + D2
+        waveformDuration = (2 * firstPhaseDuration->getTrueValue()) + secondPhaseDuration->getTrueValue();
     }
 
-    pulseTrainPeriod->setTrueMinimum(minimum);
+    return waveformDuration;
+}
+
+
+/* Private slot that constrains pulseTrainPeriod's lowest possible value to the sum of the durations of active phases */
+void StimParamDialog::constrainPulseTrainPeriod()
+{
+    pulseTrainPeriod->setTrueMinimum(calculateWaveformDuration());
 }
 
 

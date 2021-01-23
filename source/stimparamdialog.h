@@ -54,6 +54,8 @@ public slots:
     void notifyFocusChanged(QWidget *lostFocus, QWidget *gainedFocus);
 
 private:
+    double calculateWaveformDuration();
+
     QDialogButtonBox *buttonBox;
 
     StimFigure *stimFigure;
