@@ -61,11 +61,11 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
 
     firstPhaseDurationLabel = new QLabel(tr("First Phase Duration (D1): "));
     firstPhaseDuration = new TimeSpinBox(timestep_us);
-    firstPhaseDuration->setRange(0, 100000000000);
+    firstPhaseDuration->setRange(0, 5000);
 
     secondPhaseDurationLabel = new QLabel(tr("Second Phase Duration (D2): "));
     secondPhaseDuration = new TimeSpinBox(timestep_us);
-    secondPhaseDuration->setRange(0, 100000000000);
+    secondPhaseDuration->setRange(0, 5000);
 
     interphaseDelayLabel = new QLabel(tr("Interphase Delay (DP): "));
     interphaseDelay = new TimeSpinBox(timestep_us);
@@ -139,7 +139,7 @@ StimParamDialog::StimParamDialog(StimParameters *parameter, QString nativeChanne
 
     numberOfStimPulsesLabel = new QLabel(tr("Number of Stim Pulses"));
     numberOfStimPulses = new QSpinBox();
-    numberOfStimPulses->setRange(2, 1000000000);
+    numberOfStimPulses->setRange(2, 256);
 
     pulseTrainPeriodLabel = new QLabel(tr("Pulse Train Period: "));
     pulseTrainPeriod = new TimeSpinBox(timestep_us);
